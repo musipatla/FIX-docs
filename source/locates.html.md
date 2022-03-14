@@ -43,9 +43,9 @@ Clear Street expects every message sent to have a unique continuous sequence num
 
 | Message | Tag 35 | Comments | Direction w.r.t. CLST |
 | --- | --- | --- | --- |
-| New Order - Single | D | 1. Make a single locate request 2. Accept/Reject a single locate | Incoming |
-| New Order - List | E | 1. Make multiple locate requests 2. Accept/Reject multiple locates | Incoming |
-| Execution Report | 8 | 1. Offer response for a single locate request with locate id 2. Status response for a single locate accept/reject message with locate id 3. Multiple status responses for a list of locate accept/reject messages with locate ids | Outgoing |
+| New Order - Single | D | 1. Make a single locate request <br/>2. Accept/Reject a single locate | Incoming |
+| New Order - List | E | 1. Make multiple locate requests <br/>2. Accept/Reject multiple locates | Incoming |
+| Execution Report | 8 | 1. Offer response for a single locate request with locate id <br/>2. Status response for a single locate accept/reject message with locate id <br/>3. Multiple status responses for a list of locate accept/reject messages with locate ids | Outgoing |
 | Reject | 3 | 1. Any validation/authentication errors on the Order requests | Outgoing |
 | Quote Request | R | 1. Request a quote for a list of securities | Incoming |
 | Quote | S | 1. Response for quote request. Multiple responses are send depending on the number of quotes requested. | Outgoing |
@@ -73,12 +73,12 @@ Clear Street expects every message sent to have a unique continuous sequence num
 | ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | R |
 | OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | R |
 | Account | 1 |  | Account ID | ACCTID | AlphaNumeric |  | R |
-| HandInst | 21 | 1-Auto, Private; 2-Auto, Public; 3-Manual | Instructions for order handling on Broker trading floor | 1 | Numeric | 1 | O |
-| Side | 54 | 1-Buy;2-Sell;3-Buy Minus;4-Sell Plus;5-Sell Short;6-Sell Short Exempt;7-Undisclosed;8-Cross;9-Cross Short | Side | 1 | Numeric | 1 | O |
-| OrdType | 40 | 1-Market;2-Limit;3-Stop;4-Stop Limit;5-Market On Close;6-With or Without;7-Limit or Better;8-Limit With or Without;9-On Basis;A-On Close;B-Limit On Close;C-Forex C;D-Previously Quoted;E-Previously Indicated;F-Forext F;G-Forex G;H-Forex H;I-Funari;P-Pegged | Order Type | 1 | AlphaNumeric | 1 | O |
+| HandInst | 21 | 1-Auto, Private<br/>2-Auto, Public<br/>3-Manual | Instructions for order handling on Broker trading floor | 1 | Numeric | 1 | O |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | O |
+| OrdType | 40 | 1-Market<br/>2-Limit<br/>3-Stop<br/>4-Stop Limit<br/>5-Market On Close<br/>6-With or Without<br/>7-Limit or Better<br/>8-Limit With or Without<br/>9-On Basis<br/>A-On Close<br/>B-Limit On Close<br/>C-Forex C<br/>D-Previously Quoted<br/>E-Previously Indicated<br/>F-Forext F<br/>G-Forex G<br/>H-Forex H<br/>I-Funari<br/>P-Pegged | Order Type | 1 | AlphaNumeric | 1 | O |
 | ClearingAccount | 440 |  | Trader ID | TRDRID | AlphaNumeric |  | O |
 | Text | 58 |  | Any comments by trader | comment | AlphaNumeric |  | O |
-| IDSource | 22 | 1-CUSIP;2-SEDOL;4-ISIN;8-Exchange Symbol | Security ID type  | 1 | Numeric | 1 | CR |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type  | 1 | Numeric | 1 | CR |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | CR |
 
 
@@ -92,26 +92,26 @@ Clear Street expects every message sent to have a unique continuous sequence num
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | MsgType | 35 | E | Message type | E | AlphaNumeric | 1 | R | N |
 | ListID | 66 |  | Unique ID for the Order |  | AlphaNumeric |  | R | N |
-| BidType | 394 | 1-Non Disclosed;2-Disclosed;3-No Bidding Process | Code to identify the type of Bid request | 3 | Numeric | 1 | R | N |
+| BidType | 394 | 1-Non Disclosed<br/>2-Disclosed<br/>3-No Bidding Process | Code to identify the type of Bid request | 3 | Numeric | 1 | R | N |
 | TotNoOrders | 68 |  | Total number of list order entries across all messages |  | Numeric |  | R | N |
 | NoOrders | 73 |  | Number of orders in this message |  | Numeric |  | R | N |
 | ClOrdID | 11 |  | Unique ID for the Order. Must be the first in the repeatable list. |  | AlphaNumeric | 25 | R | Y |
 | ListSeqNo | 67 |  | Order number within this list |  | Numeric |  | R | Y |
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | R | Y |
-| Side | 54 | 1-Buy;2-Sell;3-Buy Minus;4-Sell Plus;5-Sell Short;6-Sell Short Exempt;7-Undisclosed;8-Cross;9-Cross Short | Side | 1 | Numeric | 1 | O | Y |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | O | Y |
 | Text | 58 |  | Any comments by trader | comment | AlphaNumeric |  | O | Y |
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | R | Y |
-| OrdType | 40 | 1-Market;2-Limit;3-Stop;4-Stop Limit;5-Market On Close;6-With or Without;7-Limit or Better;8-Limit With or Without;9-On Basis;A-On Close;B-Limit On Close;C-Forex C;D-Previously Quoted;]E-Previously Indicated;F-Forext F;G-Forex G;H-Forex H;I-Funari;P-Pegged | Order Type | 1 | AlphaNumeric | 1 | O | Y |
+| OrdType | 40 | 1-Market<br/>2-Limit<br/>3-Stop<br/>4-Stop Limit<br/>5-Market On Close<br/>6-With or Without<br/>7-Limit or Better<br/>8-Limit With or Without<br/>9-On Basis<br/>A-On Close<br/>B-Limit On Close<br/>C-Forex C<br/>D-Previously Quoted<br/>E-Previously Indicated<br/>F-Forext F<br/>G-Forex G<br/>H-Forex H<br/>I-Funari<br/>P-Pegged | Order Type | 1 | AlphaNumeric | 1 | O | Y |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | R | Y |
 | ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | R | Y |
 | OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | R | Y |
-| IDSource | 22 | 1-CUSIP;2-SEDOL;4-ISIN;8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR | Y |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR | Y |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | CR | Y |
 | ClearingAccount | 440 |  | Trader ID | TRDRID | AlphaNumeric |  | O | Y |
 | Account | 1 |  | Account ID | ACCTID | AlphaNumeric |  | R | Y |
 
 
-### Execution Report (Request)
+# Execution Report (Request)
 ```
 8=FIX.4.2\u00019=59\u000135=8\u000134=28512\u000149=CLSTLOCT\u000152=20220208-21:10:45.336\u000156=OMSC\u000137=200004\u000111=12345671\u000155=IBM\u000154=1\u000160=20220208-21:10:00.792\u0001109=ACCOUNTID\u000138=1000\u000158=THISISASINGLELOCATERESPONSEBYSYMBOL\u000117=200004\u000120=0\u0001150=B\u000139=B\u00011=ACCOUNTID\u0001151=0\u000114=1000\u00016=23.00\u000144=0.23\u000110=025\u0001
 ```
@@ -124,17 +124,17 @@ There will be one response message for each item if the response is for a list o
 | OrderID | 37 |  | Unique Locate ID |  | AlphaNumeric |  | R |
 | ClOrdID | 11 |  | ClOrdID from the New Order message |  | AlphaNumeric | 25 | R |
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | R |
-| Side | 54 | 1-Buy;2-Sell;3-Buy Minus;4-Sell Plus;5-Sell Short;6-Sell Short Exempt;7-Undisclosed;8-Cross;9-Cross Short | Side | 1 | Numeric | 1 | R |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | R |
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | R |
 | ClientID | 109 |  | Same as Account ID | CLST | AlphaNumeric |  | R |
 | OrderQty | 38 |  | Number of share requested | 1000 | Numeric |  | R |
-| IDSource | 22 | 1-CUSIP;2-SEDOL;4-ISIN;8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | CR |
 | Text | 58 |  | Any comments by locating broker or indicating partial fills or part of original order | comment | AlphaNumeric |  | O |
 | ExecID | 17 |  | Unique ID for each message |  | Numeric |  | R |
-| ExecTransType | 20 | 0-New;1-Cancel;2-Correct;3-Status | Transaction type | 0 | Numeric | 1 | R |
-| ExecType | 150 | 0-New;1-Partial Fill;2-Filled;3-Done for Day;8-Rejected;B-Calculated/Offered;C-Expired | Type of Execution report | B | AlphaNumeric | 1 | R |
-| OrdStatus | 39 | 0-New;1-Partial Fill;2-Filled;3-Done for Day;8-Rejected;B-Calculated/Offered;C-Expired | Current status of Order | B | AlphaNumeric | 1 | R |
+| ExecTransType | 20 | 0-New<br/>1-Cancel<br/>2-Correct<br/>3-Status | Transaction type | 0 | Numeric | 1 | R |
+| ExecType | 150 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Type of Execution report | B | AlphaNumeric | 1 | R |
+| OrdStatus | 39 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Current status of Order | B | AlphaNumeric | 1 | R |
 | Account | 1 |  | Account ID from Order | ACCTID | AlphaNumeric |  | R |
 | LeavesQty | 151 |  | Amount of shares open for further execution |  | Numeric |  | R |
 | CumQty | 14 |  | Currently executed shares |  | Numeric |  | R |
@@ -142,7 +142,7 @@ There will be one response message for each item if the response is for a list o
 | Price | 44 |  | Price |  | Numeric |  | R |
 
 
-### New Order-Single (Accept/Reject) 
+# New Order-Single (Accept/Reject) 
 
 ```
 // Example 1: Accept
@@ -163,22 +163,22 @@ There will be one response message for each item if the response is for a list o
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | MsgType | 35 | D | Message type | D | AlphaNumeric | 1 | R |
 | ClOrdID | 11 |  | Unique ID for the Order |  | AlphaNumeric | 25 | O |
-| HandInst | 21 | 1-Auto, Private;2-Auto, Public;3-Manual | Instructions for order handling on Broker trading floor | 1 | Numeric | 1 | O |
+| HandInst | 21 | 1-Auto, Private<br/>2-Auto, Public<br/>3-Manual | Instructions for order handling on Broker trading floor | 1 | Numeric | 1 | O |
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | O |
-| Side | 54 | 1-Buy;2-Sell;3-Buy Minus;4-Sell Plus;5-Sell Short;6-Sell Short Exempt;7-Undisclosed;8-Cross;9-Cross Short | Side | 1 | Numeric | 1 | O |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | O |
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | R |
-| OrdType | 40 | 1-Market;2-Limit;3-Stop;4-Stop Limit;5-Market On Close;6-With or Without;7-Limit or Better;8-Limit With or Without;9-On Basis;A-On Close;B-Limit On Close;C-Forex C;D-Previously Quoted;E-Previously Indicated;F-Forext F;G-Forex G;H-Forex H;I-Funari;P-Pegged | Order Type | 1 | AlphaNumeric | 1 | O |
+| OrdType | 40 | 1-Market<br/>2-Limit<br/>3-Stop<br/>4-Stop Limit<br/>5-Market On Close<br/>6-With or Without<br/>7-Limit or Better<br/>8-Limit With or Without<br/>9-On Basis<br/>A-On Close<br/>B-Limit On Close<br/>C-Forex C<br/>D-Previously Quoted<br/>E-Previously Indicated<br/>F-Forext F<br/>G-Forex G<br/>H-Forex H<br/>I-Funari<br/>P-Pegged | Order Type | 1 | AlphaNumeric | 1 | O |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | R |
 | ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | R |
 | OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | O |
-| IDSource | 22 | 1-CUSIP;2-SEDOL;4-ISIN;8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | CR |
 | ClearingAccount | 440 |  | Trader ID | TRDRID | AlphaNumeric |  | O |
 | Account | 1 |  | Account ID | ACCTID | AlphaNumeric |  | O |
-| QuoteID | 117 | Locate_ID,1-Accept Locate;Locate_ID,2-Reject Locate | Locate ID, Accept/Reject | 123456,1 | AlphaNumeric |  | R |
+| QuoteID | 117 | Locate_ID,1-Accept Locate<br/>Locate_ID,2-Reject Locate | Locate ID, Accept/Reject | 123456,1 | AlphaNumeric |  | R |
 
 
-### New Order-List (Accept/Reject)
+# New Order-List (Accept/Reject)
 ```
 8=FIX.4.2\u00019=0054\u000135=E\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u000166=10000002\u0001394=3\u000168=2\u000173=2\u000111=12345681\u000167=1\u000155=IBM\u000154=1\u000158=THISISALISTLOCATEACCEPTBYSYMBOL\u000160=20220208-21:10:00.792\u000140=1\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u000138=1000\u0001440=TRADERID\u00011=ACCOUNTID\u0001117=200005,1\u000111=12345681\u000167=2\u000155=AAPL\u000154=1\u000158=THISISALISTLOCATEACCEPTBYSYMBOL\u000160=20220208-21:10:00.792\u000140=1\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u000138=2000\u0001440=TRADERID\u00011=ACCOUNTID\u0001117=200006,1\u000110=106\u0001
 ```
@@ -189,26 +189,26 @@ There will be one response message for each item if the response is for a list o
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | MsgType | 35 | E | Message type | E | AlphaNumeric | 1 | R | N |
 | ListID | 66 |  | Unique ID for the Order |  | AlphaNumeric |  | R | N |
-| BidType | 394 | 1-Non Disclosed;2-Disclosed;3-No Bidding Process | Code to identify the type of Bid request | 3 | Numeric | 1 | R | N |
+| BidType | 394 | 1-Non Disclosed<br/>2-Disclosed<br/>3-No Bidding Process | Code to identify the type of Bid request | 3 | Numeric | 1 | R | N |
 | TotNoOrders | 68 |  | Total number of list order entries across all messages |  | Numeric |  | R | N |
 | NoOrders | 73 |  | Number of orders in this message |  | Numeric |  | R | N |
 | ClOrdID | 11 |  | Unique ID for the Order. Must be the first in the repeatable list. |  | AlphaNumeric | 25 | R | Y |
 | ListSeqNo | 67 |  | Order number within this list |  | Numeric |  | R | Y |
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | R | Y |
-| Side | 54 | 1-Buy;2-Sell;3-Buy Minus;4-Sell Plus;5-Sell Short;6-Sell Short Exempt;7-Undisclosed;8-Cross;9-Cross Short | Side | 1 | Numeric | 1 | O | Y || Text | 58 |  | Any comments by trader | comment | AlphaNumeric |  | O | Y |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | O | Y || Text | 58 |  | Any comments by trader | comment | AlphaNumeric |  | O | Y |
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | R | Y |
-| OrdType | 40 | 1-Market;2-Limit;3-Stop;4-Stop Limit;5-Market On Close;6-With or Without;7-Limit or Better;8-Limit With or Without;9-On Basis;A-On Close;B-Limit On Close;C-Forex C;D-Previously Quoted;E-Previously Indicated;F-Forext F;G-Forex G;H-Forex H;I-Funari;P-Pegged | Order Type | 1 | AlphaNumeric | 1 | O | Y |
+| OrdType | 40 | 1-Market<br/>2-Limit<br/>3-Stop<br/>4-Stop Limit<br/>5-Market On Close<br/>6-With or Without<br/>7-Limit or Better<br/>8-Limit With or Without<br/>9-On Basis<br/>A-On Close<br/>B-Limit On Close<br/>C-Forex C<br/>D-Previously Quoted<br/>E-Previously Indicated<br/>F-Forext F<br/>G-Forex G<br/>H-Forex H<br/>I-Funari<br/>P-Pegged | Order Type | 1 | AlphaNumeric | 1 | O | Y |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | R | Y |
 | ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | R | Y |
 | OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | R | Y |
-| IDSource | 22 | 1-CUSIP;2-SEDOL;4-ISIN;8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR | Y |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR | Y |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | CR | Y |
 | ClearingAccount | 440 |  | Trader ID | TRDRID | AlphaNumeric |  | O | Y |
 | Account | 1 |  | Account ID | ACCTID | AlphaNumeric |  | R | Y |
-| QuoteID | 117 | Locate_ID,1-Accept Locate;Locate_ID,2-Reject Locate | Locate ID, Accept/Reject | 123456,1 | AlphaNumeric |  | R | Y |
+| QuoteID | 117 | Locate_ID,1-Accept Locate<br/>Locate_ID,2-Reject Locate | Locate ID, Accept/Reject | 123456,1 | AlphaNumeric |  | R | Y |
 
 
-### Execution Report (Accept/Reject)
+# Execution Report (Accept/Reject)
 ```
 8=FIX.4.2\u00019=59\u000135=8\u000134=28512\u000149=CLSTLOCT\u000152=20220208-21:10:45.336\u000156=OMSC\u000137=200005\u000111=12345671\u000155=IBM\u000154=1\u000160=20220208-21:10:00.792\u0001109=ACCOUNTID\u000138=1000\u000158=THISISASINGLELOCATEACCEPTRESPONSEBYSYMBOL\u000117=200005\u000120=0\u0001150=2\u000139=2\u00011=ACCOUNTID\u0001151=0\u000114=1000\u00016=23.00\u000144=0.23\u000110=025\u0001
 ```
@@ -221,27 +221,24 @@ There will be one response message for each item if the response is for a list o
 | OrderID | 37 |  | Unique Locate ID |  | AlphaNumeric |  | R |
 | ClOrdID | 11 |  | ClOrdID from the New Order message |  | AlphaNumeric | 25 | R |
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | R |
-| Side | 54 | 1-Buy;2-Sell;3-Buy Minus;4-Sell Plus;5-Sell Short;6-Sell Short Exempt;7-Undisclosed;8-Cross;9-Cross Short | Side | 1 | Numeric | 1 | R |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | R |
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | R |
 | ClientID | 109 |  | Same as Account ID | CLST | AlphaNumeric |  | R |
 | OrderQty | 38 |  | Number of share requested | 1000 | Numeric |  | R |
-| IDSource | 22 | 1-CUSIP;2-SEDOL;4-ISIN;8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | CR |
 | Text | 58 |  | Any comments by locating broker or indicating partial fills or part of original order | comment | AlphaNumeric |  | O |
 | ExecID | 17 |  | Unique ID for each message |  | Numeric |  | R |
-| ExecTransType | 20 | 0-New;
-1-Cancel;
-2-Correct;
-3-Status | Transaction type | 0 | Numeric | 1 | R |
-| ExecType | 150 | 0-New;1-Partial Fill;2-Filled;3-Done for Day;8-Rejected;B-Calculated/Offered;C-Expired | Type of Execution report | 2 | AlphaNumeric | 1 | R |
-| OrdStatus | 39 | 0-New;1-Partial Fill;2-Filled;3-Done for Day;8-Rejected;B-Calculated/Offered;C-Expired | Current status of Order | 2 | AlphaNumeric | 1 | R |
+| ExecTransType | 20 | 0-New<br/>1-Cancel<br/>2-Correct<br/>3-Status | Transaction type | 0 | Numeric | 1 | R |
+| ExecType | 150 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Type of Execution report | 2 | AlphaNumeric | 1 | R |
+| OrdStatus | 39 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Current status of Order | 2 | AlphaNumeric | 1 | R |
 | Account | 1 |  | Account ID from Order | ACCTID | AlphaNumeric |  | R |
 | LeavesQty | 151 |  | Amount of shares open for further execution |  | Numeric |  | R |
 | CumQty | 14 |  | Currently executed shares | 1000 | Numeric |  | R |
 | AvgPx | 6 |  | Calculated average price | 0.23 | Numeric |  | R |
 
 
-### Reject
+# Reject
 ```
 8=FIX.4.2\u00019=59\u000135=3\u000134=28512\u000149=CLSTLOCT\u000152=20220208-21:10:45.336\u000156=OMSC\u000145=12345691\u000158=Order rejected. Missing Security ID\u000110=025\u0001
 ```
@@ -254,7 +251,7 @@ There will be one response message for each item if the response is for a list o
 | Text | 58 |  | Reason for reject | Order rejected. Missing field ClOrdID | AlphaNumeric |  | R |
 
 
-### Quote Request
+# Quote Request
 ```
 8=FIX.4.2\u00019=0054\u000135=R\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u0001131=123456783\u0001146=2\u0001115=ACCOUNTID\u0001109=ACCOUNTID\u000155=IBM\u000138=1000\u000154=1\u000155=AAPL\u000138=2000\u000154=1\u000110=106\u0001
 ```
@@ -265,16 +262,16 @@ There will be one response message for each item if the response is for a list o
 | Message Type | 35 | R | Message type | R | AlphaNumeric | 1 | R | N |
 | NoRelatedSym | 146 |  | Number of related symbols in this order | 1 | Numeric |  | R | N |
 | QuoteReqID | 131 |  | Unique ID for the Quote | A12345bc | AlphaNumeric |  | R | N |
-| OnBehalfOfCompID | 115 |  | On behalf of company ID; Same as Firm ID/MPID | CLST | AlphaNumeric |  | R | N |
+| OnBehalfOfCompID | 115 |  | On behalf of company ID<br/> Same as Firm ID/MPID | CLST | AlphaNumeric |  | R | N |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | R | N |
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | R | Y |
-| IDSource | 22 | 1-CUSIP;2-SEDOL;4-ISIN;8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR | Y |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR | Y |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | CR | Y |
 | OrderQty | 38 |  | Number of shares for which quote is being requested | 1000 | Numeric |  | R | Y |
 | Side | 54 | 1-Buy | Side of Quote | 1 | Numeric | 1 | O | Y |
 
 
-### Quote
+# Quote
 ```
 8=FIX.4.2\u00019=59\u000135=S\u000134=28512\u000149=CLSTLOCT\u000152=20220208-21:10:45.336\u000156=OMSC\u0001131=123456783\u0001115=ACCOUNTID\u0001109=ACCOUNTID\u0001117=100001\u000155=IBM\u0001135=1000\u0001133=0.23\u000110=025\u0001
 ```
@@ -285,11 +282,11 @@ There will be one response message for each of the securities requested as part 
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | MsgType | 35 | S | Message type | S | AlphaNumeric | 1 | R |
 | QuoteReqID | 131 |  | Unique ID from the Quote Request ReferenceId |  | AlphaNumeric |  | R |
-| OnBehalfOfCompID | 115 |  | On behalf of company ID; Filled with same information from Quote Request message account_id | CLST | AlphaNumeric |  | CR |
+| OnBehalfOfCompID | 115 |  | On behalf of company ID<br/> Filled with same information from Quote Request message account_id | CLST | AlphaNumeric |  | CR |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | R |
 | QuoteID | 117 |  | Unique ID for this quote locate_id |  | AlphaNumeric |  | R |
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | R |
-| IDSource | 22 | 1-CUSIP;2-SEDOL;4-ISIN;8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | CR |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | CR |
-| OfferSize | 135 |  | Number of shares that can be offered;If availability is less the OrderQty then availability;If availability is more than OrderQty then OrderQty;1 if no OrderQty is specified and available;0 if no OrderQty is specified and not available | 1000 | Numeric |  | R |
+| OfferSize | 135 |  | Number of shares that can be offered<br/>If availability is less the OrderQty then availability<br/>If availability is more than OrderQty then OrderQty<br/>1 if no OrderQty is specified and available<br/>0 if no OrderQty is specified and not available | 1000 | Numeric |  | R |
 | OfferPx | 133 |  | Offer price for the security requested | 0.23 | Numeric |  | R |
