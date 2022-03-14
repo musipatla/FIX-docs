@@ -42,7 +42,7 @@ Clear Street expects every message sent to have a unique continuous sequence num
 # Message List
 
 | Message | Tag 35 | Comments | Direction w.r.t. CLST |
-| --- | --- | --- | --- | --- |
+| --- | --- | --- | --- |
 | New Order - Single | D | 1. Make a single locate request 2. Accept/Reject a single locate | Incoming |
 | New Order - List | E | 1. Make multiple locate requests 2. Accept/Reject multiple locates | Incoming |
 | Execution Report | 8 | 1. Offer response for a single locate request with locate id 2. Status response for a single locate accept/reject message with locate id 3. Multiple status responses for a list of locate accept/reject messages with locate ids | Outgoing |
