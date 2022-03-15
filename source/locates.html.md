@@ -61,11 +61,11 @@ This flow will be decommissioned in the future once all OMSs migrate to the pref
 
 | Message | Tag 35 | Comments | Direction w.r.t. CLST |
 | --- | --- | --- | --- |
-| New Order - Single | D | 1. Make a single locate request <br/>2. Accept/Reject a single locate | Incoming |
-| New Order - List | E | 1. Make multiple locate requests <br/>2. Accept/Reject multiple locates | Incoming |
+| New Order - Single | D | 1. Request to locate a single security <br/>2. Request to Accept/Reject a single locate | Incoming |
+| New Order - List | E | 1. Request to locate multiple securities <br/>2. Request to Accept/Reject multiple locates | Incoming |
 | Execution Report | 8 | 1. Offer response for a single locate request with locate id <br/>2. Status response for a single locate accept/reject message with locate id <br/>3. Multiple status responses for a list of locate accept/reject messages with locate ids | Outgoing |
 | Reject | 3 | 1. Any validation/authentication errors on the Order requests | Outgoing |
-| Quote Request | R | 1. Request a quote for a list of securities | Incoming |
+| Quote Request | R | 1. Request to locate a list of securities | Incoming |
 | Quote | S | 1. Response for quote request. Multiple responses are send depending on the number of quotes requested. | Outgoing |
 
 # New Order - Single (Request)
