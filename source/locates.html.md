@@ -39,6 +39,24 @@ Clear Street also recommends exchange of heartbeats every 30 seconds by sending 
 
 Clear Street expects every message sent to have a unique continuous sequence number as part of message with Tag 34=. If there are any gaps in sequence numbers, a sequence reset message will sent to OMS client with tag `34=4`.
 
+# Message Flows
+
+Currently we support two different message flows.
+
+## Preferred Message Flow
+1. OMS will send a `Quote Request` message to locate securities
+2. Clear Street responsds by sending a `Quote` message with the located securities information including Locate_ID in `Tag 117`.
+3. OMS will send a `New Order` meessage by setting `Tag 117` with the Locate ID that Clear Street provided.
+4. Clear Street responsds by sending a `Execution Report` message with status update such as accepted/exipred/etc  in `Tag 39`
+
+## Other Message Flow
+This flow will be decommissioned in the future once all OMSs migrate to the preferred message flow above.
+
+1. OMS will send a `New Order` message to locate securities
+2. Clear Street responsds by sending a `Execution Report` message with the located securities information including Locate_ID in `Tag 37`.
+3. OMS will send a `New Order` meessage by setting `Tag 117` with the Locate ID with status code that Clear Street provided. To accept OMS need to send Locate_ID,1 for `Tag 117` and to reject OMS need to send Locate_ID,3 for `Tag 117`.
+4. Clear Street responsds by sending a `Execution Report` message with status update such as accepted/exipred/etc in `Tag 39`
+
 # Message List
 
 | Message | Tag 35 | Comments | Direction w.r.t. CLST |
