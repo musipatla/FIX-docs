@@ -47,17 +47,17 @@ Currently we support two different message flows.
 
 ## Preferred Message Flow
 1. OMS will send a `Quote Request` message to locate securities
-2. Clear Street responsds by sending a `Quote` message with the located securities information including Locate_ID in `Tag 117`.
+2. Clear Street responds by sending a `Quote` message with the located securities information including Locate_ID in `Tag 117`.
 3. OMS will send a `New Order` meessage by setting `Tag 117` with the Locate ID that Clear Street provided.
-4. Clear Street responsds by sending a `Execution Report` message with status update such as accepted/exipred/etc  in `Tag 39`
+4. Clear Street responds by sending a `Execution Report` message with status update such as accepted/exipred/etc  in `Tag 39`
 
-## Other Message Flow
+## Existing Message Flow
 This flow will be decommissioned in the future once all OMSs migrate to the preferred message flow above.
 
 1. OMS will send a `New Order` message to locate securities
-2. Clear Street responsds by sending a `Execution Report` message with the located securities information including Locate_ID in `Tag 37`.
+2. Clear Street responds by sending a `Execution Report` message with the located securities information including Locate_ID in `Tag 37`.
 3. OMS will send a `New Order` meessage by setting `Tag 117` with the Locate ID with status code that Clear Street provided. To accept OMS need to send Locate_ID,1 for `Tag 117` and to reject OMS need to send Locate_ID,3 for `Tag 117`.
-4. Clear Street responsds by sending a `Execution Report` message with status update such as accepted/exipred/etc in `Tag 39`
+4. Clear Street responds by sending a `Execution Report` message with status update such as accepted/exipred/etc in `Tag 39`
 
 # Message List
 
@@ -67,18 +67,18 @@ This flow will be decommissioned in the future once all OMSs migrate to the pref
 | New Order - List | E | 1. Request to locate multiple securities <br/>2. Request to Accept/Reject multiple locates | Incoming |
 | Execution Report | 8 | 1. Offer response for a single locate request with locate id <br/>2. Status response for a single locate accept/reject message with locate id <br/>3. Multiple status responses for a list of locate accept/reject messages with locate ids | Outgoing |
 | Reject | 3 | 1. Any validation/authentication errors on the Order requests | Outgoing |
-| Quote Request | Required | 1. Request to locate a list of securities | Incoming |
+| Quote Request | R | 1. Request to locate a list of securities | Incoming |
 | Quote | S | 1. Response for quote request. Multiple responses are send depending on the number of quotes requested. | Outgoing |
 
 # New Order - Single (Request)
 
 ```
 // Example 1: By Symbol
-8=FIX.4.2\u00019=0054\u000135=D\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u000111=12345671\u000155=IBM\u000154=1\u000160=20220208-21:10:00.792\u000140=1\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u000138=1000\u0001440=TRADERID\u00011=ACCOUNTID\u000158=THISISASINGLELOCATEREQUESTBYSYMBOL\u000110=106\u0001
+8=FIX.4.29=005435=D49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0111=1234567155=IBM54=160=20220208-21:10:00.79240=1109=ACCOUNTID76=USRNM,PSWD38=1000440=TRADERID1=ACCOUNTID58=THISISASINGLELOCATEREQUESTBYSYMBOL10=106
 ```
 ```
 // Example 2: By CUSIP
-8=FIX.4.2\u00019=0054\u000135=D\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u000111=12345672\u000154=1\u000160=20220208-21:10:00.792\u000140=1\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u000138=1000\u000122=1\u000148=459200101\u0001440=TRADERID\u00011=ACCOUNTID\u000158=THISISASINGLELOCATEREQUESTBYCUSIP\u000110=106\u0001
+8=FIX.4.29=005435=D49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0111=1234567254=160=20220208-21:10:00.79240=1109=ACCOUNTID76=USRNM,PSWD38=100022=148=459200101440=TRADERID1=ACCOUNTID58=THISISASINGLELOCATEREQUESTBYCUSIP10=106
 ```
 
 `New Order - Single` is a request sent by OMS to locate a single security. 
@@ -104,9 +104,9 @@ This flow will be decommissioned in the future once all OMSs migrate to the pref
 
 # New Order - List (Request)
 ```
-8=FIX.4.2\u00019=0054\u000135=E\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u000166=10000001\u0001394=3\u000168=2\u000173=2\u000111=12345681\u000167=1\u000155=IBM\u000154=1\u000158=THISISALISTLOCATEREQUESTBYSYMBOL\u000160=20220208-21:10:00.792\u000140=1\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u000138=1000\u0001440=TRADERID\u00011=ACCOUNTID\u000111=12345681\u000167=2\u000155=AAPL\u000154=1\u000158=THISISALISTLOCATEREQUESTBYSYMBOL\u000160=20220208-21:10:00.792\u000140=1\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u000138=2000\u0001440=TRADERID\u00011=ACCOUNTID\u000110=106\u0001
+8=FIX.4.29=005435=E49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0166=10000001394=368=273=211=1234568167=155=IBM54=158=THISISALISTLOCATEREQUESTBYSYMBOL60=20220208-21:10:00.79240=1109=ACCOUNTID76=USRNM,PSWD38=1000440=TRADERID1=ACCOUNTID11=1234568167=255=AAPL54=158=THISISALISTLOCATEREQUESTBYSYMBOL60=20220208-21:10:00.79240=1109=ACCOUNTID76=USRNM,PSWD38=2000440=TRADERID1=ACCOUNTID10=106
 ```
-`New Order - List` is a request sent by OMS to locate multiple securities. 
+`New Order - List` is a request sent by OMS to locate multiple securities. Please note that repeatable fields must follow the same order mentioned in this document.
 
 | Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required | Repeatable |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -133,7 +133,7 @@ This flow will be decommissioned in the future once all OMSs migrate to the pref
 
 # Execution Report (Request)
 ```
-8=FIX.4.2\u00019=59\u000135=8\u000134=28512\u000149=CLSTLOCT\u000152=20220208-21:10:45.336\u000156=OMSC\u000137=200004\u000111=12345671\u000155=IBM\u000154=1\u000160=20220208-21:10:00.792\u0001109=ACCOUNTID\u000138=1000\u000158=THISISASINGLELOCATERESPONSEBYSYMBOL\u000117=200004\u000120=0\u0001150=B\u000139=B\u00011=ACCOUNTID\u0001151=0\u000114=1000\u00016=23.00\u000144=0.23\u000110=025\u0001
+8=FIX.4.29=5935=834=2851249=CLSTLOCT52=20220208-21:10:45.33656=OMSC37=20000411=1234567155=IBM54=160=20220208-21:10:00.792109=ACCOUNTID38=100058=THISISASINGLELOCATERESPONSEBYSYMBOL17=20000420=0150=B39=B1=ACCOUNTID151=014=10006=23.0044=0.2310=025
 ```
 `Execution Report` (One Response Message for each item in List of Order Request) is a response sent by Clear Street with a locate. 
 There will be one response message for each item if the response is for a list of multiple securities request via `New Order - List`
@@ -166,15 +166,15 @@ There will be one response message for each item if the response is for a list o
 
 ```
 // Example 1: Accept
-8=FIX.4.2\u00019=0054\u000135=D\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u000111=12345681\u000160=20220208-21:10:00.792\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u00011=ACCOUNTID\u0001117=100011,1\u000110=106\u0001
+8=FIX.4.29=005435=D49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0111=1234568160=20220208-21:10:00.792109=ACCOUNTID76=USRNM,PSWD1=ACCOUNTID117=100011,110=106
 ```
 ```
 // Example 2: Accept
-8=FIX.4.2\u00019=0054\u000135=D\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u000111=12345681\u000160=20220208-21:10:00.792\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u00011=ACCOUNTID\u0001117=100011\u000110=106\u0001
+8=FIX.4.29=005435=D49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0111=1234568160=20220208-21:10:00.792109=ACCOUNTID76=USRNM,PSWD1=ACCOUNTID117=10001110=106
 ```
 ```
 // Example 3: Reject
-8=FIX.4.2\u00019=0054\u000135=D\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u000111=12345681\u000160=20220208-21:10:00.792\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u00011=ACCOUNTID\u0001117=100011,2\u000110=106\u0001
+8=FIX.4.29=005435=D49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0111=1234568160=20220208-21:10:00.792109=ACCOUNTID76=USRNM,PSWD1=ACCOUNTID117=100011,210=106
 ```
 
 `New Order-Single (Accept/Reject)`  is a request sent by OMS to accept/reject a locate that was offered by Clear Street. 
@@ -200,10 +200,10 @@ There will be one response message for each item if the response is for a list o
 
 # New Order-List (Accept/Reject)
 ```
-8=FIX.4.2\u00019=0054\u000135=E\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u000166=10000002\u0001394=3\u000168=2\u000173=2\u000111=12345681\u000167=1\u000155=IBM\u000154=1\u000158=THISISALISTLOCATEACCEPTBYSYMBOL\u000160=20220208-21:10:00.792\u000140=1\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u000138=1000\u0001440=TRADERID\u00011=ACCOUNTID\u0001117=200005,1\u000111=12345681\u000167=2\u000155=AAPL\u000154=1\u000158=THISISALISTLOCATEACCEPTBYSYMBOL\u000160=20220208-21:10:00.792\u000140=1\u0001109=ACCOUNTID\u000176=USRNM,PSWD\u000138=2000\u0001440=TRADERID\u00011=ACCOUNTID\u0001117=200006,1\u000110=106\u0001
+8=FIX.4.29=005435=E49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0166=10000002394=368=273=211=1234568167=155=IBM54=158=THISISALISTLOCATEACCEPTBYSYMBOL60=20220208-21:10:00.79240=1109=ACCOUNTID76=USRNM,PSWD38=1000440=TRADERID1=ACCOUNTID117=200005,111=1234568167=255=AAPL54=158=THISISALISTLOCATEACCEPTBYSYMBOL60=20220208-21:10:00.79240=1109=ACCOUNTID76=USRNM,PSWD38=2000440=TRADERID1=ACCOUNTID117=200006,110=106
 ```
 
-`New Order-List (Accept/Reject)` is a request sent by OMS to accept/reject multiple locates that were offered by Clear Street.
+`New Order-List (Accept/Reject)` is a request sent by OMS to accept/reject multiple locates that were offered by Clear Street. Please note that repeatable fields must follow the same order mentioned in this document.
 
 | Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required | Repeatable |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -231,7 +231,7 @@ There will be one response message for each item if the response is for a list o
 
 # Execution Report (Accept/Reject)
 ```
-8=FIX.4.2\u00019=59\u000135=8\u000134=28512\u000149=CLSTLOCT\u000152=20220208-21:10:45.336\u000156=OMSC\u000137=200005\u000111=12345671\u000155=IBM\u000154=1\u000160=20220208-21:10:00.792\u0001109=ACCOUNTID\u000138=1000\u000158=THISISASINGLELOCATEACCEPTRESPONSEBYSYMBOL\u000117=200005\u000120=0\u0001150=2\u000139=2\u00011=ACCOUNTID\u0001151=0\u000114=1000\u00016=23.00\u000144=0.23\u000110=025\u0001
+8=FIX.4.29=5935=834=2851249=CLSTLOCT52=20220208-21:10:45.33656=OMSC37=20000511=1234567155=IBM54=160=20220208-21:10:00.792109=ACCOUNTID38=100058=THISISASINGLELOCATEACCEPTRESPONSEBYSYMBOL17=20000520=0150=239=21=ACCOUNTID151=014=10006=23.0044=0.2310=025
 ```
 `Execution Report` (One Response Message for each item in List of Order Accept/Reject) is a response sent by Clear Street confirming the accept/reject of a locate. 
 There will be one response message for each item if the response is for a list of multiple securities request via `New Order - List`
@@ -261,7 +261,7 @@ There will be one response message for each item if the response is for a list o
 
 # Reject
 ```
-8=FIX.4.2\u00019=59\u000135=3\u000134=28512\u000149=CLSTLOCT\u000152=20220208-21:10:45.336\u000156=OMSC\u000145=12345691\u000158=Order rejected. Missing Security ID\u000110=025\u0001
+8=FIX.4.29=5935=334=2851249=CLSTLOCT52=20220208-21:10:45.33656=OMSC45=1234569158=Order rejected. Missing Security ID10=025
 ```
 `Reject` is sent by Clear Street where there are any issues with the request messages. 
 
@@ -274,17 +274,17 @@ There will be one response message for each item if the response is for a list o
 
 # Quote Request
 ```
-8=FIX.4.2\u00019=0054\u000135=R\u000149=OMSC\u000156=CLSTLOCT\u000134=1360\u000152=20220208-21:10:01\u0001131=123456783\u0001146=2\u0001115=ACCOUNTID\u0001109=ACCOUNTID\u000155=IBM\u000138=1000\u000154=1\u000155=AAPL\u000138=2000\u000154=1\u000110=106\u0001
+8=FIX.4.29=005435=R49=OMSC56=CLSTLOCT34=136052=20220208-21:10:01131=123456783146=2115=ACCOUNTID109=ACCOUNTID55=IBM38=100054=155=AAPL38=200054=110=106
 ```
-`Quote Request` is a request sent by OMS for locating multiple securities. 
+`Quote Request` is a request sent by OMS for locating multiple securities. Please note that repeatable fields must follow the same order mentioned in this document.
 
 | Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required | Repeatable |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Message Type | 35 | Required | Message type | Required | AlphaNumeric | 1 | Required | No |
-| NoRelatedSym | 146 |  | Number of related symbols in this order | 1 | Numeric |  | Required | No |
 | QuoteReqID | 131 |  | Unique ID for the Quote | A12345bc | AlphaNumeric |  | Required | No |
 | OnBehalfOfCompID | 115 |  | On behalf of company ID<br/> Same as Firm ID/MPID | CLST | AlphaNumeric |  | Required | No |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required | No |
+| NoRelatedSym | 146 |  | Number of related symbols in this order | 1 | Numeric |  | Required | No |
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Required | Yes |
 | IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required | Yes |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required | Yes |
@@ -294,7 +294,7 @@ There will be one response message for each item if the response is for a list o
 
 # Quote
 ```
-8=FIX.4.2\u00019=59\u000135=S\u000134=28512\u000149=CLSTLOCT\u000152=20220208-21:10:45.336\u000156=OMSC\u0001131=123456783\u0001115=ACCOUNTID\u0001109=ACCOUNTID\u0001117=100001\u000155=IBM\u0001135=1000\u0001133=0.23\u000110=025\u0001
+8=FIX.4.29=5935=S34=2851249=CLSTLOCT52=20220208-21:10:45.33656=OMSC131=123456783115=ACCOUNTID109=ACCOUNTID117=10000155=IBM135=1000133=0.2310=025
 ```
 `Quote` is a response sent by Clear Street as a reply to Quote Request message with Locate ID.
 There will be one response message for each of the securities requested as part of `Quote Request`. 
