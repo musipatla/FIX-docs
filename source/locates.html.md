@@ -37,27 +37,29 @@ A `Logon` message (`Tag 35=A`) must be sent to Clear Street on every business da
 
 Clear Street also recommends exchange of heartbeats every 30 seconds by sending a message with `Tag 35=0`.
 
-Clear Street expects every message sent to have a unique continuous sequence number as part of message with Tag 34=. If there are any gaps in sequence numbers, a sequence reset message will sent to OMS client with tag `34=4`.
+Clear Street expects every message to have a unique continuous sequence number as part of message with `Tag 34`. If there are any gaps in sequence numbers, a sequence reset message will be sent to OMS client with tag `34=4`.
 
-All requests must either provide a `Symbol` (Tag 55) or both `IDSource` (Tag 22) and `SecurityID` (Tag 48) to clearly identify a security. `IDSource` (Tag 22) and `SecurityID` are marked as Conditionall Required for this purpose.
+All requests must either provide a `Symbol` (Tag 55) or both `IDSource` (Tag 22) and `SecurityID` (Tag 48) to clearly identify a security. `IDSource` (Tag 22) and `SecurityID` are marked as conditionally required for this purpose.
 
 # Message Flows
 
 Currently we support two different message flows.
 
 ## Preferred Message Flow
+We request all new OMSs to follow this message flow
+
 1. OMS will send a `Quote Request` message to locate securities
 2. Clear Street responds by sending a `Quote` message with the located securities information including Locate_ID in `Tag 117`.
-3. OMS will send a `New Order` meessage by setting `Tag 117` with the Locate ID that Clear Street provided.
-4. Clear Street responds by sending a `Execution Report` message with status update such as accepted/exipred/etc  in `Tag 39`
+3. OMS will send a `New Order` message by setting `Tag 117` with the Locate_ID that Clear Street provided.
+4. Clear Street responds by sending an `Execution Report` message with status update such as accepted/expired/etc  in `Tag 39`
 
 ## Existing Message Flow
 This flow will be decommissioned in the future once all OMSs migrate to the preferred message flow above.
 
 1. OMS will send a `New Order` message to locate securities
-2. Clear Street responds by sending a `Execution Report` message with the located securities information including Locate_ID in `Tag 37`.
-3. OMS will send a `New Order` meessage by setting `Tag 117` with the Locate ID with status code that Clear Street provided. To accept OMS need to send Locate_ID,1 for `Tag 117` and to reject OMS need to send Locate_ID,3 for `Tag 117`.
-4. Clear Street responds by sending a `Execution Report` message with status update such as accepted/exipred/etc in `Tag 39`
+2. Clear Street responds by sending an `Execution Report` message with the located securities information including Locate_ID in `Tag 37`.
+3. OMS will send a `New Order` message by setting `Tag 117` with the Locate_ID with status code that Clear Street provided. To accept OMS need to send Locate_ID,1 for `Tag 117` and to reject OMS need to send Locate_ID,3 for `Tag 117`.
+4. Clear Street responds by sending an `Execution Report` message with status update such as accepted/expired/etc in `Tag 39`
 
 # Message List
 
@@ -68,7 +70,7 @@ This flow will be decommissioned in the future once all OMSs migrate to the pref
 | Execution Report | 8 | 1. Offer response for a single locate request with locate id <br/>2. Status response for a single locate accept/reject message with locate id <br/>3. Multiple status responses for a list of locate accept/reject messages with locate ids | Outgoing |
 | Reject | 3 | 1. Any validation/authentication errors on the Order requests | Outgoing |
 | Quote Request | R | 1. Request to locate a list of securities | Incoming |
-| Quote | S | 1. Response for quote request. Multiple responses are send depending on the number of quotes requested. | Outgoing |
+| Quote | S | 1. Response for quote request. Multiple responses are sent depending on the number of quotes requested. | Outgoing |
 
 # New Order - Single (Request)
 
