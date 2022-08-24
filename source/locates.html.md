@@ -153,7 +153,7 @@ There will be one response message for each item if the response is for a list o
 | IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required |
 | Text | 58 |  | Any comments by locating broker or indicating partial fills or part of original order | comment | AlphaNumeric |  | Optional |
-| ExecID | 17 |  | Unique Locate ID |  | Numeric |  | Required |
+| ExecID | 17 |  | Unique ID for each message |  | Numeric |  | Required |
 | ExecTransType | 20 | 0-New<br/>1-Cancel<br/>2-Correct<br/>3-Status | Transaction type | 0 | Numeric | 1 | Required |
 | ExecType | 150 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Type of Execution report | B | AlphaNumeric | 1 | Required |
 | OrdStatus | 39 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Current status of Order | B | AlphaNumeric | 1 | Required |
@@ -251,7 +251,7 @@ There will be one response message for each item if the response is for a list o
 | IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required |
 | Text | 58 |  | Any comments by locating broker or indicating partial fills or part of original order | comment | AlphaNumeric |  | Optional |
-| ExecID | 17 |  | Unique Locate ID |  | Numeric |  | Required |
+| ExecID | 17 |  | Unique ID for each message |  | Numeric |  | Required |
 | ExecTransType | 20 | 0-New<br/>1-Cancel<br/>2-Correct<br/>3-Status | Transaction type | 0 | Numeric | 1 | Required |
 | ExecType | 150 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Type of Execution report | 2 | AlphaNumeric | 1 | Required |
 | OrdStatus | 39 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Current status of Order | 2 | AlphaNumeric | 1 | Required |
