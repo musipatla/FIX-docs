@@ -43,7 +43,7 @@ All requests must either provide a `Symbol` (Tag 55) or both `IDSource` (Tag 22)
 
 # Message Flows
 
-Currently we support two different message flows.
+Currently we support two different message flows. All new client implementations should use Preferred Message Flow below.
 
 ## Preferred Message Flow
 We request all new OMSs to follow this message flow
@@ -52,9 +52,157 @@ We request all new OMSs to follow this message flow
 2. Clear Street responds by sending a `Quote` message with the located securities information including Locate_ID in `Tag 117`.
 3. OMS will send a `New Order` message by setting `Tag 117` with the Locate_ID that Clear Street provided.
 4. Clear Street responds by sending an `Execution Report` message with status update such as accepted/expired/etc  in `Tag 39`
+5. OMS will send a `Order Cancel Request` message if they would like to decline the offer by setting `Tag 37` with the Locate_ID that Clear Street provided.
+5. Clear Street responds with a `Reject` message on any validation/formatting errors.
 
-## Legacy Message Flow
-This flow will be decommissioned in the future once all OMSs migrate to the preferred message flow above.
+# Message List
+
+| Message | Tag 35 | Comments | Direction w.r.t. CLST |
+| --- | --- | --- | --- |
+| Quote Request | R | 1. Request to locate a list of securities | Incoming |
+| Quote | S | 1. Response for quote request. Multiple responses are sent depending on the number of quotes requested. | Outgoing |
+| New Order - Single | D | 1. Request to Accept a single locate | Incoming |
+| Order Cancel Request | F | 1. Request to Decline a single locate | Incoming |
+| Execution Report | 8 | 1. Status response for a single locate accept/reject message with locate id <br/> | Outgoing |
+| Reject | 3 | 1. Any validation/authentication errors on the Order requests | Outgoing |
+
+# Quote Request
+```
+8=FIX.4.29=005435=R49=OMSC56=CLSTLOCT34=136052=20220208-21:10:01131=123456783146=2115=ACCOUNTID109=CLST55=IBM38=100054=155=AAPL38=200054=110=106
+```
+
+`Quote Request` is a request sent by OMS for locating multiple securities.
+
+| Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required | Repeatable |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Message Type | 35 | Required | Message type | Required | AlphaNumeric | 1 | Required | No |
+| QuoteReqID | 131 |  | Unique ID for the Quote | A12345bc | AlphaNumeric |  | Required | No |
+| OnBehalfOfCompID | 115 |  | Account ID from Order | ACCTID | AlphaNumeric |  | Required | No |
+| ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required | No |
+| NoRelatedSym | 146 |  | Number of related symbols in this order | 1 | Numeric |  | Required | No |
+| Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Required | Yes |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required | Yes |
+| SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required | Yes |
+| OrderQty | 38 |  | Number of shares for which quote is being requested | 1000 | Numeric |  | Required | Yes |
+| Side | 54 | 1-Buy | Side of Quote | 1 | Numeric | 1 | Optional | Yes |
+
+
+# Quote
+```
+8=FIX.4.29=5935=S34=2851249=CLSTLOCT52=20220208-21:10:45.33656=OMSC131=123456783115=ACCOUNTID109=CLST117=10000155=IBM135=1000133=0.2310=025
+```
+
+`Quote` is a response sent by Clear Street as a reply to Quote Request message with Locate ID.
+There will be one response message for each of the securities requested as part of `Quote Request`. 
+
+| Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| MsgType | 35 | S | Message type | S | AlphaNumeric | 1 | Required |
+| QuoteReqID | 131 |  | Unique ID from the Quote Request ReferenceId |  | AlphaNumeric |  | Required |
+| OnBehalfOfCompID | 115 |  | On behalf of company ID<br/> Filled with same information from Quote Request message account_id | ACCOUNTID | AlphaNumeric |  | Optional |
+| ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required |
+| QuoteID | 117 |  | Unique ID for this quote locate_id |  | AlphaNumeric |  | Required |
+| Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Required |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required |
+| SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required |
+| OfferSize | 135 |  | Number of shares that can be offered<br/>If availability is less the OrderQty then availability<br/>If availability is more than OrderQty then OrderQty<br/>1 if no OrderQty is specified and available<br/>0 if no OrderQty is specified and not available | 1000 | Numeric |  | Required |
+| OfferPx | 133 |  | Offer price for the security requested | 0.23 | Numeric |  | Required |
+
+# New Order-Single (To Accept an Offer) 
+```
+// Example: Accept
+8=FIX.4.29=005435=D49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0111=1234568160=20220208-21:10:00.792109=ACCOUNTID76=USRNM,PSWD1=ACCOUNTID117=10001110=106
+```
+
+`New Order-Single`  is a request sent by OMS to accept a locate that was offered by Clear Street. 
+
+| Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| MsgType | 35 | D | Message type | D | AlphaNumeric | 1 | Required |
+| ClOrdID | 11 |  | Unique ID for the Order |  | AlphaNumeric | 25 | Optional |
+| HandInst | 21 | 1-Auto, Private<br/>2-Auto, Public<br/>3-Manual | Instructions for order handling on Broker trading floor | 1 | Numeric | 1 | Optional |
+| Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Optional |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | Optional |
+| TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | Required |
+| OrdType | 40 | 1-Market<br/>2-Limit<br/>3-Stop<br/>4-Stop Limit<br/>5-Market On Close<br/>6-With or Without<br/>7-Limit or Better<br/>8-Limit With or Without<br/>9-On Basis<br/>A-On Close<br/>B-Limit On Close<br/>C-Forex C<br/>D-Previously Quoted<br/>E-Previously Indicated<br/>F-Forext F<br/>G-Forex G<br/>H-Forex H<br/>I-Funari<br/>P-Pegged | Order Type | 1 | AlphaNumeric | 1 | Optional |
+| ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required |
+| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Optional |
+| OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | Optional |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required |
+| SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required |
+| ClearingAccount | 440 |  | Trader ID | TRDRID | AlphaNumeric |  | Optional |
+| Account | 1 |  | Account ID | ACCTID | AlphaNumeric |  | Optional |
+| QuoteID | 117 | Locate_ID | Locate ID | 123456 | AlphaNumeric |  | Required |
+
+# Execution Report (Accept/Reject)
+```
+8=FIX.4.29=5935=834=2851249=CLSTLOCT52=20220208-21:10:45.33656=OMSC37=20000511=1234567155=IBM54=160=20220208-21:10:00.792109=ACCOUNTID38=100058=THISISASINGLELOCATEACCEPTRESPONSEBYSYMBOL17=20000520=0150=239=21=ACCOUNTID151=014=10006=23.0044=0.2310=025
+```
+
+`Execution Report` (One Response Message for each item in List of Order Accept/Reject) is a response sent by Clear Street confirming the accept/reject of a locate. 
+There will be one response message for each item if the response is for a list of multiple securities request via `New Order - List`
+
+| Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| MsgType | 35 | 8 | Message type | 8 | AlphaNumeric | 1 | Required |
+| OrderID | 37 |  | Unique Locate ID |  | AlphaNumeric |  | Required |
+| ClOrdID | 11 |  | ClOrdID from the New Order message |  | AlphaNumeric | 25 | Required |
+| Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Required |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | Required |
+| TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | Required |
+| ClientID | 109 |  | Same as Account ID | CLST | AlphaNumeric |  | Required |
+| OrderQty | 38 |  | Number of share requested | 1000 | Numeric |  | Required |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required |
+| SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required |
+| Text | 58 |  | Any comments by locating broker or indicating partial fills or part of original order | comment | AlphaNumeric |  | Optional |
+| ExecID | 17 |  | Locate ID |  | Numeric |  | Required |
+| ExecTransType | 20 | 0-New<br/>1-Cancel<br/>2-Correct<br/>3-Status | Transaction type | 0 | Numeric | 1 | Required |
+| ExecType | 150 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Type of Execution report | 2 | AlphaNumeric | 1 | Required |
+| OrdStatus | 39 | 0-New<br/>1-Partial Fill<br/>2-Filled<br/>3-Done for Day<br/>8-Rejected<br/>B-Calculated/Offered<br/>C-Expired | Current status of Order | 2 | AlphaNumeric | 1 | Required |
+| Account | 1 |  | Account ID from Order | ACCTID | AlphaNumeric |  | Required |
+| LeavesQty | 151 |  | Amount of shares open for further execution |  | Numeric |  | Required |
+| CumQty | 14 |  | Currently executed shares | 1000 | Numeric |  | Required |
+| AvgPx | 6 |  | Calculated average price | 0.23 | Numeric |  | Required |
+
+# Order Cancel Request (To Decline an Offer) 
+```
+// Example: Decline
+8=FIX.4.29=005435=F49=OMSC56=CLSTLOCT34=136052=20220208-21:10:0141=1234568137=20000511=123456721=ACCOUNTID109=CLST76=USRNM,PSWD55=IBM54=160=20220208-21:10:00.79238=100058=comment10=106
+```
+
+`Order Cancel Request`  is a request sent by OMS to decline a locate that was offered by Clear Street. 
+
+| Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| MsgType | 35 | F | Message type | D | AlphaNumeric | 1 | Required |
+| OrigClOrdID | 41 |  | Unique ID of the previous order when canceling or declining an locate |  | AlphaNumeric | 25 | Requeired |
+| OrderID | 37 |  | Locate ID of Locate that is being declined |  | AlphaNumeric |  | Required |
+| ClOrdID | 11 |  | Unique ID for the Order |  | AlphaNumeric | 25 | Required |
+| Account | 1 |  | Account ID | ACCTID | AlphaNumeric |  | Optional |
+| ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required |
+| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Optional |
+| Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Optional |
+| SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required |
+| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required |
+| Side | 54 | 1-Buy<br/>2-Sell<br/>3-Buy Minus<br/>4-Sell Plus<br/>5-Sell Short<br/>6-Sell Short Exempt<br/>7-Undisclosed<br/>8-Cross<br/>9-Cross Short | Side | 1 | Numeric | 1 | Optional |
+| TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | Required |
+| OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | Optional |
+| Text | 58 |  | Any comments by trader | 1000 | comment | AlphaNumeric | Optional |
+
+# Reject
+```
+8=FIX.4.29=5935=334=2851249=CLSTLOCT52=20220208-21:10:45.33656=OMSC45=1234569158=Order rejected. Missing Security ID10=025
+```
+`Reject` is sent by Clear Street where there are any issues with the request messages. 
+
+| Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| MsgType | 35 | 3 | Message type | 3 | AlphaNumeric | 1 | Required |
+| RefSeqNum | 45 |  | Reference message sequence number | 123456789 | Numeric |  | Required |
+| Text | 58 |  | Reason for reject | Order rejected. Missing field ClOrdID | AlphaNumeric |  | Required |
+
+## Legacy Message Flow 
+This flow will be decommissioned in the future once all existing OMSs migrate to the preferred message flow above.
 
 1. OMS will send a `New Order` message to locate securities
 2. Clear Street responds by sending an `Execution Report` message with the located securities information including Locate_ID in `Tag 37`.
@@ -92,7 +240,7 @@ This flow will be decommissioned in the future once all OMSs migrate to the pref
 | Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Required |
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | Required |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required |
-| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Required |
+| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Optional |
 | OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | Required |
 | Account | 1 |  | Account ID | ACCTID | AlphaNumeric |  | Required |
 | HandInst | 21 | 1-Auto, Private<br/>2-Auto, Public<br/>3-Manual | Instructions for order handling on Broker trading floor | 1 | Numeric | 1 | Optional |
@@ -125,7 +273,7 @@ This flow will be decommissioned in the future once all OMSs migrate to the pref
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | Required | Yes |
 | OrdType | 40 | 1-Market<br/>2-Limit<br/>3-Stop<br/>4-Stop Limit<br/>5-Market On Close<br/>6-With or Without<br/>7-Limit or Better<br/>8-Limit With or Without<br/>9-On Basis<br/>A-On Close<br/>B-Limit On Close<br/>C-Forex C<br/>D-Previously Quoted<br/>E-Previously Indicated<br/>F-Forext F<br/>G-Forex G<br/>H-Forex H<br/>I-Funari<br/>P-Pegged | Order Type | 1 | AlphaNumeric | 1 | Optional | Yes |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required | Yes |
-| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Required | Yes |
+| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Optional | Yes |
 | OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | Required | Yes |
 | IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required | Yes |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required | Yes |
@@ -191,7 +339,7 @@ There will be one response message for each item if the response is for a list o
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | Required |
 | OrdType | 40 | 1-Market<br/>2-Limit<br/>3-Stop<br/>4-Stop Limit<br/>5-Market On Close<br/>6-With or Without<br/>7-Limit or Better<br/>8-Limit With or Without<br/>9-On Basis<br/>A-On Close<br/>B-Limit On Close<br/>C-Forex C<br/>D-Previously Quoted<br/>E-Previously Indicated<br/>F-Forext F<br/>G-Forex G<br/>H-Forex H<br/>I-Funari<br/>P-Pegged | Order Type | 1 | AlphaNumeric | 1 | Optional |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required |
-| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Required |
+| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Optional |
 | OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | Optional |
 | IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required |
@@ -222,7 +370,7 @@ There will be one response message for each item if the response is for a list o
 | TransactTime | 60 |  | Date+Time in UTC | 20220121-13:27:43.000 | YYYYMMDD-HH:mm:SS:sss | 21 | Required | Yes |
 | OrdType | 40 | 1-Market<br/>2-Limit<br/>3-Stop<br/>4-Stop Limit<br/>5-Market On Close<br/>6-With or Without<br/>7-Limit or Better<br/>8-Limit With or Without<br/>9-On Basis<br/>A-On Close<br/>B-Limit On Close<br/>C-Forex C<br/>D-Previously Quoted<br/>E-Previously Indicated<br/>F-Forext F<br/>G-Forex G<br/>H-Forex H<br/>I-Funari<br/>P-Pegged | Order Type | 1 | AlphaNumeric | 1 | Optional | Yes |
 | ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required | Yes |
-| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Required | Yes |
+| ExecBroker | 76 |  | Credential string: username,password | USRNM,PSWD | AlphaNumeric |  | Optional | Yes |
 | OrderQty | 38 |  | Number of share ordered | 1000 | Numeric |  | Required | Yes |
 | IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required | Yes |
 | SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required | Yes |
@@ -273,43 +421,3 @@ There will be one response message for each item if the response is for a list o
 | RefSeqNum | 45 |  | Reference message sequence number | 123456789 | Numeric |  | Required |
 | Text | 58 |  | Reason for reject | Order rejected. Missing field ClOrdID | AlphaNumeric |  | Required |
 
-
-# Quote Request
-```
-8=FIX.4.29=005435=R49=OMSC56=CLSTLOCT34=136052=20220208-21:10:01131=123456783146=2115=ACCOUNTID109=ACCOUNTID55=IBM38=100054=155=AAPL38=200054=110=106
-```
-`Quote Request` is a request sent by OMS for locating multiple securities. Please note that repeatable fields must follow the same order mentioned in this document.
-
-| Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required | Repeatable |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Message Type | 35 | Required | Message type | Required | AlphaNumeric | 1 | Required | No |
-| QuoteReqID | 131 |  | Unique ID for the Quote | A12345bc | AlphaNumeric |  | Required | No |
-| OnBehalfOfCompID | 115 |  | On behalf of company ID<br/> Same as Firm ID/MPID | CLST | AlphaNumeric |  | Required | No |
-| ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required | No |
-| NoRelatedSym | 146 |  | Number of related symbols in this order | 1 | Numeric |  | Required | No |
-| Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Required | Yes |
-| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required | Yes |
-| SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required | Yes |
-| OrderQty | 38 |  | Number of shares for which quote is being requested | 1000 | Numeric |  | Required | Yes |
-| Side | 54 | 1-Buy | Side of Quote | 1 | Numeric | 1 | Optional | Yes |
-
-
-# Quote
-```
-8=FIX.4.29=5935=S34=2851249=CLSTLOCT52=20220208-21:10:45.33656=OMSC131=123456783115=ACCOUNTID109=ACCOUNTID117=10000155=IBM135=1000133=0.2310=025
-```
-`Quote` is a response sent by Clear Street as a reply to Quote Request message with Locate ID.
-There will be one response message for each of the securities requested as part of `Quote Request`. 
-
-| Field Name | FIX Tag # | Possible Values | Comments | Example | Format | Length | Required |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| MsgType | 35 | S | Message type | S | AlphaNumeric | 1 | Required |
-| QuoteReqID | 131 |  | Unique ID from the Quote Request ReferenceId |  | AlphaNumeric |  | Required |
-| OnBehalfOfCompID | 115 |  | On behalf of company ID<br/> Filled with same information from Quote Request message account_id | CLST | AlphaNumeric |  | Optional |
-| ClientID | 109 |  | Firm ID/MPID | CLST | AlphaNumeric |  | Required |
-| QuoteID | 117 |  | Unique ID for this quote locate_id |  | AlphaNumeric |  | Required |
-| Symbol | 55 |  | Security ticker | AAPL | Alpha |  | Required |
-| IDSource | 22 | 1-CUSIP<br/>2-SEDOL<br/>4-ISIN<br/>8-Exchange Symbol | Security ID type | 1 | Numeric | 1 | Conditionally Required |
-| SecurityID | 48 |  | Security ID as per IDSource tag 22 | 037833100 | AlphaNumeric | 12 | Conditionally Required |
-| OfferSize | 135 |  | Number of shares that can be offered<br/>If availability is less the OrderQty then availability<br/>If availability is more than OrderQty then OrderQty<br/>1 if no OrderQty is specified and available<br/>0 if no OrderQty is specified and not available | 1000 | Numeric |  | Required |
-| OfferPx | 133 |  | Offer price for the security requested | 0.23 | Numeric |  | Required |
